@@ -23,3 +23,11 @@ CREATE TABLE streaming_sessions (
         FOREIGN KEY (device_id)
         REFERENCES devices(device_id)
 );
+
+CREATE TABLE daily_device_telemetry_summary (
+    report_date DATE,
+    device_type VARCHAR(50),
+    total_sessions INT,
+    average_bitrate NUMERIC(10, 2),
+    PRIMARY KEY (report_dat, device_type)
+)
