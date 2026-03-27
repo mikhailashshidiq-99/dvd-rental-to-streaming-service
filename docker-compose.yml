@@ -1,0 +1,22 @@
+
+
+services:
+  telemetry_db:
+    image: postgres:15
+    container_name: embodied_postgres
+    environment:
+      POSTGRES_USER: embodied_admin
+      POSTGRES_PASSWORD: super_secret_password
+      POSTGRES_DB: fleet_telemetry
+    ports:
+      - "5432:5432"
+    volumes:
+      # 1. This saves your actual data to your hard drive so it doesn't disappear
+      - pg_data:/var/lib/postgresql/data
+      # 2. This tells Docker to run any SQL scripts in our 'init' folder on startup
+      - ./database/init:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+
+# This declares the named volume we used above
+volumes:
+  pg_data:
