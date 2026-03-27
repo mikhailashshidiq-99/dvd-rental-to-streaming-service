@@ -30,4 +30,4 @@ CREATE TABLE daily_device_telemetry_summary (
     total_sessions INT,
     average_bitrate NUMERIC(10, 2),
     PRIMARY KEY (report_dat, device_type)
-)
+);
