@@ -1,15 +1,35 @@
-INSERT INTO devices (device_id, device_type, os, last_online)
-VALUES ('550e8400-e29b-41d4-a716-446655440000', 'Autonomous Drone', 'Linux Edge', '2024-05-15 14:30:00');
+INSERT INTO users (user_id, email, password_hash, created_at) VALUES
+('11111111-0000-0000-0000-000000000001', 'alice@email.com', 'hash1', '2023-01-15 08:00:00'),
+('22222222-0000-0000-0000-000000000002', 'bob@email.com', 'hash2', '2023-06-20 10:30:00'),
+('33333333-0000-0000-0000-000000000003', 'charlie@email.com', 'hash3', '2024-01-05 14:15:00');
 
-INSERT INTO streaming_sessions (session_id, device_id, profile_id, content_id, start_timestamp, end_timestamp, average_bitrate, is_offline_playback, experiment_variant_id)
-VALUES (
-    '11111111-2222-3333-4444-555555555555', 
-    '550e8400-e29b-41d4-a716-446655440000', 
-    '99999999-8888-7777-6666-555555555555', 
-    101,                                    
-    '2024-05-15 14:30:00', 
-    '2024-05-15 16:30:00', 
-    1500,                                   
-    FALSE,                                  
-    'B'
-);
+INSERT INTO profiles (profile_id, user_id, profile_name, maturity_rating) VALUES
+('aaaa1111-0000-0000-0000-000000000001', '11111111-0000-0000-0000-000000000001', 'Alice (Admin)', 'TV-MA'),
+('aaaa2222-0000-0000-0000-000000000001', '11111111-0000-0000-0000-000000000001', 'Kids', 'PG'),
+('bbbb1111-0000-0000-0000-000000000002', '22222222-0000-0000-0000-000000000002', 'Bob', 'R'),
+('cccc1111-0000-0000-0000-000000000003', '33333333-0000-0000-0000-000000000003', 'Charlie', 'PG-13');
+
+INSERT INTO content (content_id, title, description, content_rating, release_year) VALUES
+(101, 'Stranger Things: The Movie', 'Sci-fi thriller', 'TV-14', 2024),
+(102, 'Data Engineering Masterclass', 'A doc on pipelines', 'PG', 2023),
+(103, 'The Arch Linux Story', 'I use Arch BTW', 'R', 2022),
+(104, 'Peppa Pig goes to Postgres', 'Kids cartoon', 'G', 2021),
+(105, 'Dune: Part Three', 'Sand and worms', 'PG-13', 2026);
+
+INSERT INTO devices (device_id, device_type, os, last_online) VALUES
+('dddd1111-0000-0000-0000-000000000001', 'Smart TV', 'WebOS', CURRENT_TIMESTAMP),
+('dddd2222-0000-0000-0000-000000000002', 'Mobile', 'iOS', CURRENT_TIMESTAMP),
+('dddd3333-0000-0000-0000-000000000003', 'Laptop', 'Arch Linux', CURRENT_TIMESTAMP);
+
+INSERT INTO streaming_sessions 
+(session_id, profile_id, content_id, device_id, start_timestamp, end_timestamp, average_bitrate, is_offline_playback, experiment_variant_id) 
+VALUES
+(GEN_RANDOM_UUID(), 'aaaa1111-0000-0000-0000-000000000001', 105, 'dddd1111-0000-0000-0000-000000000001', '2024-05-15 20:00:00', '2024-05-15 22:30:00', 4500, FALSE, 'A'),
+(GEN_RANDOM_UUID(), 'aaaa2222-0000-0000-0000-000000000001', 104, 'dddd2222-0000-0000-0000-000000000002', '2024-05-16 09:00:00', '2024-05-16 09:45:00', 1500, TRUE, 'Control'),
+(GEN_RANDOM_UUID(), 'bbbb1111-0000-0000-0000-000000000002', 102, 'dddd3333-0000-0000-0000-000000000003', '2024-05-16 18:00:00', '2024-05-16 21:00:00', 5000, FALSE, 'B'),
+(GEN_RANDOM_UUID(), 'bbbb1111-0000-0000-0000-000000000002', 101, 'dddd3333-0000-0000-0000-000000000003', '2024-05-17 21:00:00', '2024-05-17 22:30:00', 4800, FALSE, 'B'),
+(GEN_RANDOM_UUID(), 'aaaa1111-0000-0000-0000-000000000001', 101, 'dddd1111-0000-0000-0000-000000000001', '2024-05-18 20:00:00', '2024-05-18 21:00:00', 4200, FALSE, 'A'),
+(GEN_RANDOM_UUID(), 'cccc1111-0000-0000-0000-000000000003', 103, 'dddd2222-0000-0000-0000-000000000002', '2023-11-01 14:00:00', '2023-11-01 16:00:00', 2500, FALSE, 'Control'),
+(GEN_RANDOM_UUID(), 'aaaa1111-0000-0000-0000-000000000001', 103, 'dddd1111-0000-0000-0000-000000000001', '2024-05-19 20:00:00', '2024-05-19 21:30:00', 4000, FALSE, 'A'),
+(GEN_RANDOM_UUID(), 'aaaa2222-0000-0000-0000-000000000001', 104, 'dddd2222-0000-0000-0000-000000000002', '2024-05-20 10:00:00', '2024-05-20 11:00:00', 1500, TRUE, 'Control'),
+(GEN_RANDOM_UUID(), 'bbbb1111-0000-0000-0000-000000000002', 105, 'dddd3333-0000-0000-0000-000000000003', '2024-05-20 19:00:00', '2024-05-20 22:00:00', 5500, FALSE, 'B');

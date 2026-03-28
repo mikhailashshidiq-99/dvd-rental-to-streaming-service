@@ -15,6 +15,7 @@ services:
       - pg_data:/var/lib/postgresql/data
       # 2. This tells Docker to run any SQL scripts in our 'init' folder on startup
       - ./database/init:/docker-entrypoint-initdb.d
+      
     restart: unless-stopped
 
 # This declares the named volume we used above
