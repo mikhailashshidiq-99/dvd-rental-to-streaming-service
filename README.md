@@ -343,3 +343,23 @@ HAVING COUNT(DISTINCT ss1.profile_id) > 5
 ORDER BY co_watch_count DESC
 LIMIT 20;
 ```
+## Phase 5: Architecture Rationale & Legal Considerations
+
+Designing a database for a high-volume streaming service requires balancing the strict data integrity needs of transactional systems (OLTP) with the high-performance read requirements of business intelligence (OLAP). Below is the rationale behind the core architectural choices in this project.
+
+### 1. Normalization Tradeoffs
+The database was designed in **Third Normal Form (3NF)** for its core dimensional tables (`users`, `profiles`, `content`, `devices`). 
+* **The Benefit:** This strict normalization eliminates data redundancy and prevents update anomalies. For example, if a user changes their email, it only needs to be updated in one place (`users`), rather than across millions of streaming records.
+* **The Tradeoff:** Analytical queries require expensive, multi-table `JOIN` operations. 
+* **The Solution:** To prevent these `JOIN`s from bottlenecking dashboards, I implemented a daily ETL pipeline that aggregates the normalized telemetry data into a highly denormalized `daily_content_metrics` summary table. This gives us the best of both worlds: strict integrity on the backend, and lightning-fast reads for the BI layer.
+
+### 2. Indexing & Partitioning Strategy
+To optimize the `streaming_sessions` fact table, which grows exponentially in a real-world scenario, the following strategies were designed:
+* **Targeted B-Tree Indexing:** Foreign keys (`profile_id`, `content_id`) and high-cardinality lookup columns (`experiment_variant_id`, `start_timestamp`) were pre-indexed. This drops query times for temporal analytics and A/B test evaluations from minutes to milliseconds.
+* **Date-Based Partitioning (Production Concept):** In a true production environment, the `streaming_sessions` table would be horizontally partitioned by `DATE(start_timestamp)`. This allows the query engine to ignore months of irrelevant data during daily active user (DAU) rollups, and makes archiving historical data an instant metadata operation rather than a slow `DELETE` query.
+
+### 3. Privacy, Security, & Legal Compliance (GDPR/CCPA)
+Handling consumer data carries immense legal responsibility. This schema was built with **Privacy by Design** principles:
+* **PII Minimization & Pseudonymization:** Personally Identifiable Information (PII) like `email` and `password_hash` are strictly isolated in the `users` table. The `streaming_sessions` table only references a `profile_id` UUID. Data Scientists querying viewing habits never see the user's actual identity.
+* **Right to Erasure (GDPR Article 17):** The schema heavily utilizes `ON DELETE CASCADE` constraints. If a user submits a "Right to be Forgotten" request and their `user_id` is removed, the database automatically and atomically purges their profiles, billing history, and viewing telemetry without leaving orphaned records.
+* **Anti-Scraping Defenses:** Surrogate keys utilize `UUID v4` instead of auto-incrementing integers. This prevents bad actors from executing Insecure Direct Object Reference (IDOR) attacks or guessing competitor metrics (e.g., creating an account and seeing `user_id = 1005` to deduce the platform only has 1,000 users).
