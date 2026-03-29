@@ -3,6 +3,11 @@ INSERT INTO users (user_id, email, password_hash, created_at) VALUES
 ('22222222-0000-0000-0000-000000000002', 'bob@email.com', 'hash2', '2023-06-20 10:30:00'),
 ('33333333-0000-0000-0000-000000000003', 'charlie@email.com', 'hash3', '2024-01-05 14:15:00');
 
+INSERT INTO billing_history (billing_id, user_id, amount, payment_date, subscription_tier) VALUES
+(GEN_RANDOM_UUID(), '11111111-0000-0000-0000-000000000001', 15.99, '2024-05-01 00:00:00', 'Premium'),
+(GEN_RANDOM_UUID(), '22222222-0000-0000-0000-000000000002', 9.99, '2024-05-01 00:00:00', 'Standard'),
+(GEN_RANDOM_UUID(), '33333333-0000-0000-0000-000000000003', 4.99, '2024-05-01 00:00:00', 'Basic');
+
 INSERT INTO profiles (profile_id, user_id, profile_name, maturity_rating) VALUES
 ('aaaa1111-0000-0000-0000-000000000001', '11111111-0000-0000-0000-000000000001', 'Alice (Admin)', 'TV-MA'),
 ('aaaa2222-0000-0000-0000-000000000001', '11111111-0000-0000-0000-000000000001', 'Kids', 'PG'),
